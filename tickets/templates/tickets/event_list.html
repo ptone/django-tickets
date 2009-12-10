@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Ticketed Events{% endblock %}
+{% block content %}
+<h3>Ticketed Events</h3>
+{% for e in event_list %}
+<a href="{% url tickets.views.purchase event_slug=e.slug %}">{{ e.name }}</a><br>
+{% endfor %}
+{% endblock content %}
+

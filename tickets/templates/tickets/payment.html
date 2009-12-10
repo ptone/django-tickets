@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Purchase Tickets{% endblock %}
+{% block content %}
+<h3>Purchase tickets</h3>
+{{ event.name }}<br>
+{{ purchase.name }}<br>
+${{ purchase.amount|floatformat:2 }}<br>
+{{ form.render }}
+{% endblock content %}
+
+

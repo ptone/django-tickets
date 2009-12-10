@@ -1,0 +1,5 @@
+A Django app for selling tickets
+
+Built agains fork of django-paypal:
+git://github.com/frozenskys/django-paypal.git
+http://github.com/frozenskys/django-paypal/commit/8df692c003db4a7563801ea401cb98e6b2d1230e

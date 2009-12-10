@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+
+<head>
+    {% block head_links %}
+
+    {% endblock %}
+    {% block head_javascripts %}
+
+    {% endblock %}
+    
+    <title>{% block title %}Event Ticket{% endblock %}</title>
+</head>
+    
+<body>
+    <div class="container">
+
+        {% block header %}
+           
+        {% endblock %}
+
+  
+        {% block content %}
+           Page Content
+        {% endblock %}
+   
+    {% block footer %}
+
+    {% endblock %}
+
+</body>
+</html>
+    
+    
