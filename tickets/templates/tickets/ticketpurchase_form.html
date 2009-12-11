@@ -5,6 +5,9 @@
 {% if event.start %}
     <p>scheduled for {{ event.start|date }}</p>
 {% endif %}
+<div class="event-description">
+    {{ event.description|safe }}
+</div>
 <form action="" method="post" accept-charset="utf-8">
     <p>Purchaser Information</p>
     {{ purchaseform.as_p }}

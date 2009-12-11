@@ -3,6 +3,9 @@ from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.http import HttpResponseBadRequest, HttpResponse
 from django.views.generic.simple import direct_to_template
 from django import forms
+from django.template import RequestContext
+from django.forms.util import ErrorList
+
 from paypal.standard.forms import PayPalPaymentsForm
 from tickets.models import *
 from tickets.forms import *
@@ -35,39 +38,43 @@ def purchase(request,event_slug=None):
                 cd = form.cleaned_data
                 if form.cleaned_data['ticket_type']:
                     total += form.cleaned_data['ticket_type'].price
-            purchase = TicketPurchase(amount=total,**purchaseform.cleaned_data)
-            purchase.save()
-            # @@ need a code branch here to handle anon qty based purchase
-            tickets = []
-            for form in formset.forms:
-                if event.attendee_required and form.cleaned_data['attendee']:
-                    ticket = Ticket(purchase=purchase,event=event,**form.cleaned_data)
-                    ticket.save()
-                    tickets.append(ticket)
-            
-            if request.user.is_authenticated() and 'cash' in request.POST:
-                purchase.status = "completed cash"
+            if total:
+                purchase = TicketPurchase(amount=total,**purchaseform.cleaned_data)
                 purchase.save()
-                return HttpResponse ("Cash Payment Recorded")
+                # @@ need a code branch here to handle anon qty based purchase
+                tickets = []
+                for form in formset.forms:
+                    if event.attendee_required and form.cleaned_data['attendee']:
+                        ticket = Ticket(purchase=purchase,event=event,**form.cleaned_data)
+                        ticket.save()
+                        tickets.append(ticket)
+            
+                if request.user.is_authenticated() and 'cash' in request.POST:
+                    purchase.status = "completed cash"
+                    purchase.save()
+                    return HttpResponse ("Cash Payment Recorded")
 
                 
-            paypal_dict = {
-                "business": settings.PAYPAL_RECEIVER_EMAIL,
-                "amount": total,
-                "item_name": "tickets for: %s (%s)" % (event.name,len(tickets)),
-                "invoice": purchase.invoice,
-                "notify_url": settings.PAYPAL_NOTIFY_URL,
-                "return_url": settings.PAYPAL_RETURN_URL,
-                "cancel_return": settings.PAYPAL_CANCEL_URL,
+                paypal_dict = {
+                    "business": settings.PAYPAL_RECEIVER_EMAIL,
+                    "amount": total,
+                    "item_name": "tickets for: %s (%s)" % (event.name,len(tickets)),
+                    "invoice": purchase.invoice,
+                    "notify_url": settings.PAYPAL_NOTIFY_URL,
+                    "return_url": settings.PAYPAL_RETURN_URL,
+                    "cancel_return": settings.PAYPAL_CANCEL_URL,
 
-            }
+                }
             
-            form = PayPalPaymentsForm(initial=paypal_dict)
+                paypal_form = PayPalPaymentsForm(initial=paypal_dict)
 
-            context = {'form': form,'purchase':purchase,'event':event,'tickets':tickets}
+                context = {'form': paypal_form,'purchase':purchase,'event':event,'tickets':tickets}
             
 
-            return render_to_response("tickets/payment.html", context)
+                return render_to_response("tickets/payment.html", context,context_instance=RequestContext(request))
+            else: # no total
+                # @@ not sure why this error appears in the middle of the formset...
+                form._errors['__all__']  = ErrorList(["You have to buy at least one ticket to continue"])
     else:
         purchaseform = TicketPurchaseForm(prefix='purchase')
         data = {}
@@ -86,5 +93,5 @@ def purchase(request,event_slug=None):
         context['cash_ok']=True
         print "cash ok"
     
-    return render_to_response("tickets/ticketpurchase_form.html",context)
+    return render_to_response("tickets/ticketpurchase_form.html",context,context_instance=RequestContext(request))
     return HttpResponse(event.name)

@@ -19,4 +19,6 @@ class TicketForm(forms.Form):
         cleaned_data = self.cleaned_data
         if cleaned_data['attendee'] and not cleaned_data['ticket_type']:
             raise forms.ValidationError ("A ticket type must be selected for each attendee")
+        if cleaned_data['ticket_type'] and not cleaned_data['attendee']:
+            raise forms.ValidationError ("An attendee must be specified")
         return cleaned_data
