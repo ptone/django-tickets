@@ -5,11 +5,12 @@ class TicketInline(admin.TabularInline):
     model = Ticket
 
 class PurchaseAdmin (admin.ModelAdmin):
-    list_display = ('invoice','name','date','amount')
+    list_display = ('invoice','name','date','amount','status')
     inlines = [TicketInline]
 
 class TicketAdmin (admin.ModelAdmin):
-    list_display = ('event','ticket_type','attendee','purchase')
+    list_display = ('event','ticket_type','attendee','paid')
+    # list_filter = ('paid',)
     
 admin.site.register(TicketType)
 admin.site.register(TicketPurchase,PurchaseAdmin)

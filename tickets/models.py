@@ -59,6 +59,6 @@ class Ticket(models.Model):
         return self.attendee or self.purchase.name
         
     def paid(self):
-        return self.purchase.paid
+        return self.purchase.paid()
 
         
