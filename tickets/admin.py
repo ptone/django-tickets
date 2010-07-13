@@ -7,8 +7,11 @@ class TicketInline(admin.TabularInline):
 class PurchaseAdmin (admin.ModelAdmin):
     list_display = ('invoice','name','date','amount')
     inlines = [TicketInline]
+
+class TicketAdmin (admin.ModelAdmin):
+    list_display = ('event','ticket_type','attendee','purchase')
     
 admin.site.register(TicketType)
 admin.site.register(TicketPurchase,PurchaseAdmin)
 admin.site.register(TicketedEvent)
-admin.site.register(Ticket)
+admin.site.register(Ticket, TicketAdmin)

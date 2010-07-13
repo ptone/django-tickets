@@ -38,7 +38,7 @@ class TicketPurchase(models.Model):
     status = models.CharField(default='pending',max_length=20)
     
     def __unicode__(self):
-        return self.name
+        return "%s (%s)" % (self.name, self.status)
         
     def paid(self):
         return "completed" in self.status 
