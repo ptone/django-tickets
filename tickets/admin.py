@@ -10,7 +10,7 @@ class PurchaseAdmin (admin.ModelAdmin):
 
 class TicketAdmin (admin.ModelAdmin):
     list_display = ('event','ticket_type','attendee','paid')
-    # list_filter = ('paid',)
+    list_filter = ('event',)
     
 admin.site.register(TicketType)
 admin.site.register(TicketPurchase,PurchaseAdmin)
