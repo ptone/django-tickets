@@ -1,15 +1,31 @@
 from django.conf import settings
 from django.shortcuts import render_to_response, redirect, get_object_or_404
-from django.http import HttpResponseBadRequest, HttpResponse
+from django.http import HttpResponseBadRequest, HttpResponse, HttpResponseForbidden
 from django.views.generic.simple import direct_to_template
 from django import forms
 from django.template import RequestContext
 from django.forms.util import ErrorList
+from django.contrib.auth.decorators import login_required
 
 from paypal.standard.forms import PayPalPaymentsForm
 from tickets.models import *
 from tickets.forms import *
 
+import csv
+
+@login_required
+def purchase_data_csv (request):
+    if not request.user.is_staff:
+        return HttpResponseForbidden("you must have admin access")
+    response = HttpResponse(mimetype='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=ticketpurchases.csv'
+    purchases = TicketPurchase.objects.all()
+    writer = csv.writer(response)
+    writer.writerow(['date', 'amount', 'name', 'status'])
+    for p in purchases:
+        writer.writerow([p.date, p.amount,p.name, p.status])
+    return response
+    
 def initiated(request):
     pass
     

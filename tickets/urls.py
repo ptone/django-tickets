@@ -15,7 +15,7 @@ urlpatterns = patterns('tickets',
     url(r'^(?P<event_slug>\w*)/$','views.purchase'),
     url(r'^payment/verification/', include('paypal.standard.ipn.urls')),
     url(r'^sold_out$',direct_to_template,{'template':"tickets/sold_out.html"},name="sold_out"),
-
+    url(r'purchasedata$','views.purchase_data_csv'),
 # list/types
 # list/purchases
 # ticket/buy
