@@ -25,7 +25,20 @@ def purchase_data_csv (request):
     for p in purchases:
         writer.writerow([p.date, p.amount,p.name, p.status])
     return response
-    
+
+@login_required
+def ticket_data_csv (request):
+    if not request.user.is_staff:
+        return HttpResponseForbidden("you must have admin access")
+    response = HttpResponse(mimetype='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=ticketdata.csv'
+    tickets = Ticket.objects.filter(purchase__status__icontains="completed").order_by('event')
+    writer = csv.writer(response)
+    writer.writerow(['attendee', 'ticket_type', 'event'])
+    for t in tickets:
+        writer.writerow([t, t.ticket_type ,t.event])
+    return response
+
 def initiated(request):
     pass
     

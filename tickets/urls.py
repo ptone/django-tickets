@@ -12,10 +12,12 @@ urlpatterns = patterns('tickets',
         'template_object_name':'event',
         'template_name':'tickets/event_list.html',
         }),
-    url(r'^(?P<event_slug>\w*)/$','views.purchase'),
     url(r'^payment/verification/', include('paypal.standard.ipn.urls')),
     url(r'^sold_out$',direct_to_template,{'template':"tickets/sold_out.html"},name="sold_out"),
     url(r'purchasedata$','views.purchase_data_csv'),
+    url(r'ticketdata$','views.ticket_data_csv'),
+    url(r'^(?P<event_slug>\w*)/$','views.purchase'),
+    
 # list/types
 # list/purchases
 # ticket/buy
